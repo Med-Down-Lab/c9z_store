@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self';">
+  <title>مستودع أنظمة C9Z Firmware — التحقق والتنزيل الآمن</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0d0f'/%3E%3Cpath d='M7 22l4-12 5 6 5-6 4 12-9-3z' fill='%23ff0022'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (document.getElementById('c9z-fonts-link')) return;
+      var l = document.createElement('link');
+      l.id = 'c9z-fonts-link';
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap';
+      document.head.appendChild(l);
+    }, { once: true });
+  </script>
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="stylesheet" href="/c9z_store/assets/css/design-system.css">
+  <style>
+    .fw-verify-drop {
+      border: 1px dashed rgba(255, 0, 34, 0.35);
+      border-radius: 12px;
+      padding: 20px;
+      background: rgba(6, 6, 9, 0.72);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .fw-verify-drop input[type="file"] {
+      display: none;
+    }
+    .fw-hash-output {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #060609;
+      border: 1px solid rgba(76, 195, 138, 0.32);
+      color: var(--positive);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      direction: ltr;
+      text-align: left;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .fw-hash-output.is-error {
+      border-color: rgba(255, 77, 100, 0.45);
+      color: #ff6b7f;
+    }
+    .fw-hash-output.is-warn {
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #ffd99c;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Unified Tactical Top Navigation -->
+  <header class="site-nav">
+    <div class="container site-nav-inner">
+      <a href="/c9z_store/" class="brand-logo">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>c9zwolf</span>
+        <span class="brand-tag">FIRMWARE LAB</span>
+      </a>
+
+      <nav aria-label="التنقل الرئيسي">
+        <ul class="nav-links" id="fw-nav-links">
+          <li><a href="/c9z_store/">الرئيسية</a></li>
+          <li><a href="/c9z_store/pages/shop.html">المتجر الكامل</a></li>
+          <li><a href="/c9z_store/pages/firmware.html" class="active">الفيرموير</a></li>
+          <li><a href="/c9z_store/pages/C9Z-Web-Flasher.html">Web Flasher</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="cart-trigger-btn" data-action="open-cart" aria-label="فتح سلة المشتريات">
+          <span data-icon="shopping-bag"></span>
+          <span>السلة</span>
+          <span class="cart-count-pill" data-cart-count>0</span>
+        </button>
+        <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="القائمة">
+          <span data-icon="menu"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Official Firmware Arsenal & Filter Deck -->
+    <section class="section" style="padding-top:36px;padding-bottom:36px">
+      <div class="container">
+        <div class="section-header" data-reveal="up">
+          <div>
+            <div class="section-eyebrow">
+              <span data-icon="download" class="icon icon-sm"></span>
+              <span>FIRMWARE REPOSITORY // OTA &amp; WEB SERIAL</span>
+            </div>
+            <h1 class="section-title" style="font-size:clamp(1.75rem,3.6vw,2.45rem)">مستودع أنظمة C9Z Firmware الرسمية</h1>
+            <p class="section-subtitle">أحدث حزم التشغيل المدمجة لأجهزة C9Z ولوحات ESP32 مع التحقق المحلي من بصمة الأمان SHA-256 قبل التثبيت عبر المتصفح.</p>
+          </div>
+          <div class="flex items-center gap-2" style="flex-wrap:wrap">
+            <a href="/c9z_store/pages/C9Z-Web-Flasher.html" class="btn btn-primary btn-sm">
+              <span data-icon="zap" class="icon icon-sm"></span>
+              <span>فتح Web Flasher المباشر</span>
+            </a>
+            <a href="#verify" class="btn btn-secondary btn-sm">
+              <span data-icon="shield-check" class="icon icon-sm"></span>
+              <span>فحص بصمة SHA-256</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- v3.0 Releases Command Deck -->
+        <div class="c9z-releases-deck" data-reveal="up">
+          <div class="category-tabs c9z-tactical-tabs" id="fw-filter-tabs" role="tablist" aria-label="تصفية أنظمة الفيرموير">
+            <button type="button" class="category-tab active" role="tab" aria-selected="true" data-fw-cat="all">
+              <span data-icon="grid" class="icon icon-sm"></span>
+              <span>كل الأنظمة الرسمية</span>
+              <span class="tab-count-pill mono">3</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-fw-cat="esp32">
+              <span data-icon="cpu" class="icon icon-sm"></span>
+              <span>معمارية ESP32</span>
+              <span class="tab-count-pill mono">2</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-fw-cat="esp32-s3">
+              <span data-icon="terminal" class="icon icon-sm"></span>
+              <span>معمارية ESP32-S3</span>
+              <span class="tab-count-pill mono">1</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-fw-cat="rf-nfc">
+              <span data-icon="radio" class="icon icon-sm"></span>
+              <span>دعم CC1101 / NFC</span>
+              <span class="tab-count-pill mono">2</span>
+            </button>
+          </div>
+
+          <div class="releases-telemetry-strip">
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot is-green"></span>
+              <span class="pillar-stat-label">قناة البناء المعتمدة:</span>
+              <strong class="mono">STABLE PRODUCTION</strong>
+            </div>
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot"></span>
+              <span class="pillar-stat-label">عنوان التفليش المدمج:</span>
+              <strong class="mono">0x0 MERGED BIN</strong>
+            </div>
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot is-green"></span>
+              <span class="pillar-stat-label">التحقق التشفيري:</span>
+              <strong class="mono">LOCAL SHA-256 AUDIT</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Release Dossier Grid -->
+        <div class="c9z-releases-grid" id="fw-cards-grid" data-stagger-group>
+          <!-- Package 1: C9Z Core -->
+          <article class="feature-card c9z-release-card is-released" data-fw-tags="esp32 rf-nfc" data-stagger-item>
+            <div class="release-card-topbar">
+              <div class="release-ver-group">
+                <span class="release-dot is-live"></span>
+                <span class="release-ver-pill mono">v1.0.2</span>
+                <span class="release-cat-tag">Bruce / CYD Core</span>
+              </div>
+              <span class="badge badge-positive">مستقر ومفحوص</span>
+            </div>
+
+            <div class="release-card-body">
+              <div class="release-meta-row">
+                <span class="release-target-chip mono">
+                  <span data-icon="cpu" class="icon icon-sm"></span>
+                  <span>TARGET: CYD 2.8" / C9Z-2 / C9Z-3</span>
+                </span>
+                <span class="release-date-chip mono">ESP32</span>
+              </div>
+
+              <h2 class="release-card-title">C9Z Core — v1.0.2</h2>
+              <p class="release-card-desc">النظام القياسي المتوافق مع لوحات CYD 2.8" وأجهزة C9Z-2 و C9Z-3 مع دعم وحدات Sub-GHz وشاشات اللمس.</p>
+
+              <div class="hw-spec-matrix">
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">المعالج المدعوم</span>
+                  <span class="hw-spec-val mono">ESP32-D0WDQ6</span>
+                </div>
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">حجم الفلاش المطلوب</span>
+                  <span class="hw-spec-val mono">4MB Flash (0x0)</span>
+                </div>
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">اسم الحزمة</span>
+                  <span class="hw-spec-val mono">c9z-cyd-v102.bin</span>
+                </div>
+              </div>
+
+              <div class="release-hash-box" title="حزمة التثبيت المباشر عبر USB">
+                <div class="release-hash-label">
+                  <span data-icon="shield-check" class="icon icon-sm"></span>
+                  <span class="mono">BINARY:</span>
+                </div>
+                <code class="release-hash-code mono">c9z-cyd-v102.bin</code>
+                <button type="button" class="release-hash-copy" data-copy-hash="c9z-cyd-v102.bin">
+                  <span data-icon="copy" class="icon icon-sm"></span>
+                  <span>نسخ</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="release-card-footer">
+              <span class="release-channel-tag mono">CHANNEL // STABLE-CORE</span>
+              <a href="/c9z_store/pages/C9Z-Web-Flasher.html" class="pillar-action-link">
+                <span>تثبيت عبر Web Flasher</span>
+                <span data-icon="arrow-left" class="icon icon-sm"></span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Package 2: C9Z Pro S3 -->
+          <article class="feature-card c9z-release-card is-released" data-fw-tags="esp32-s3 rf-nfc" data-stagger-item>
+            <div class="release-card-topbar">
+              <div class="release-ver-group">
+                <span class="release-dot is-live"></span>
+                <span class="release-ver-pill mono">v1.0.4</span>
+                <span class="release-cat-tag">Pro Multi-Radio S3</span>
+              </div>
+              <span class="badge badge-positive">الإصدار الرائد</span>
+            </div>
+
+            <div class="release-card-body">
+              <div class="release-meta-row">
+                <span class="release-target-chip mono">
+                  <span data-icon="cpu" class="icon icon-sm"></span>
+                  <span>TARGET: M5StickS3 / C9Z-4 / C9Z-5 / C9Z-7</span>
+                </span>
+                <span class="release-date-chip mono">ESP32-S3</span>
+              </div>
+
+              <h2 class="release-card-title">C9Z Pro — v1.0.4</h2>
+              <p class="release-card-desc">نظام الأداء العالي للوحات ESP32-S3 وأجهزة C9Z-4 و C9Z-7 مع دعم واجهات الراديو المتعددة (CC1101 + NRF24 + NFC).</p>
+
+              <div class="hw-spec-matrix">
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">المعالج المدعوم</span>
+                  <span class="hw-spec-val mono">ESP32-S3 Dual-Core</span>
+                </div>
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">حجم الفلاش المطلوب</span>
+                  <span class="hw-spec-val mono">8MB / 16MB Flash</span>
+                </div>
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">اسم الحزمة</span>
+                  <span class="hw-spec-val mono">c9z-s3-v104.bin</span>
+                </div>
+              </div>
+
+              <div class="release-hash-box" title="حزمة التثبيت المباشر عبر USB">
+                <div class="release-hash-label">
+                  <span data-icon="shield-check" class="icon icon-sm"></span>
+                  <span class="mono">BINARY:</span>
+                </div>
+                <code class="release-hash-code mono">c9z-s3-v104.bin</code>
+                <button type="button" class="release-hash-copy" data-copy-hash="c9z-s3-v104.bin">
+                  <span data-icon="copy" class="icon icon-sm"></span>
+                  <span>نسخ</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="release-card-footer">
+              <span class="release-channel-tag mono">CHANNEL // PRO-S3-RELEASE</span>
+              <a href="/c9z_store/pages/C9Z-Web-Flasher.html" class="pillar-action-link">
+                <span>تثبيت عبر Web Flasher</span>
+                <span data-icon="arrow-left" class="icon icon-sm"></span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Package 3: C9Z Marauder Edition -->
+          <article class="feature-card c9z-release-card is-released" data-fw-tags="esp32" data-stagger-item>
+            <div class="release-card-topbar">
+              <div class="release-ver-group">
+                <span class="release-dot is-live"></span>
+                <span class="release-ver-pill mono">v2.3.5</span>
+                <span class="release-cat-tag">Wi-Fi &amp; BLE Marauder</span>
+              </div>
+              <span class="badge badge-positive">مخصص للشبكات</span>
+            </div>
+
+            <div class="release-card-body">
+              <div class="release-meta-row">
+                <span class="release-target-chip mono">
+                  <span data-icon="cpu" class="icon icon-sm"></span>
+                  <span>TARGET: ESP32-WROOM-32 / C9Z-5</span>
+                </span>
+                <span class="release-date-chip mono">ESP32</span>
+              </div>
+
+              <h2 class="release-card-title">C9Z Marauder Edition</h2>
+              <p class="release-card-desc">بناء مخصص لمشاريع تحليل واختبار الشبكات اللاسلكية Wi-Fi وفحص أجهزة BLE مع تسجيل PCAP على بطاقة SD.</p>
+
+              <div class="hw-spec-matrix">
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">المعالج المدعوم</span>
+                  <span class="hw-spec-val mono">ESP32-WROOM-32</span>
+                </div>
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">حجم الفلاش المطلوب</span>
+                  <span class="hw-spec-val mono">4MB Flash (0x0)</span>
+                </div>
+                <div class="hw-spec-row">
+                  <span class="hw-spec-key">اسم الحزمة</span>
+                  <span class="hw-spec-val mono">c9z-marauder.bin</span>
+                </div>
+              </div>
+
+              <div class="release-hash-box" title="حزمة التثبيت المباشر عبر USB">
+                <div class="release-hash-label">
+                  <span data-icon="shield-check" class="icon icon-sm"></span>
+                  <span class="mono">BINARY:</span>
+                </div>
+                <code class="release-hash-code mono">c9z-marauder.bin</code>
+                <button type="button" class="release-hash-copy" data-copy-hash="c9z-marauder.bin">
+                  <span data-icon="copy" class="icon icon-sm"></span>
+                  <span>نسخ</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="release-card-footer">
+              <span class="release-channel-tag mono">CHANNEL // RECON-WIFI</span>
+              <a href="/c9z_store/pages/C9Z-Web-Flasher.html" class="pillar-action-link">
+                <span>تثبيت عبر Web Flasher</span>
+                <span data-icon="arrow-left" class="icon icon-sm"></span>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Local SHA-256 Binary Verifier Dossier (#verify) -->
+    <section class="section" id="verify" style="padding-top:0">
+      <div class="container">
+        <article class="feature-card c9z-pillar-card" data-reveal="up">
+          <div class="pillar-card-topbar">
+            <div class="pillar-code-group">
+              <span class="pillar-num mono">01</span>
+              <span class="pillar-sep">//</span>
+              <span class="pillar-sys mono">SYS.CRYPTO-VERIFY</span>
+            </div>
+            <span class="pillar-domain-badge mono">SHA-256 WEB CRYPTO API</span>
+          </div>
+
+          <div class="pillar-card-head">
+            <div class="feature-icon pillar-icon" data-icon="shield-check"></div>
+            <div class="pillar-head-copy">
+              <h2>فحص بصمة الملف محلياً (SHA-256 Hash Verification)</h2>
+              <p>تحقق من سلامة ملف الـ <code>.bin</code> قبل تفليشه عبر USB للتأكد من عدم تلفه أثناء التحميل. يتم الحساب بالكامل داخل متصفحك دون رفع الملف لأي خادم.</p>
+            </div>
+          </div>
+
+          <div style="padding:0 16px 18px;display:flex;flex-direction:column;gap:12px">
+            <div class="fw-verify-drop">
+              <label class="btn btn-primary" style="cursor:pointer">
+                <span data-icon="upload" class="icon icon-sm"></span>
+                <span>اختر ملف Firmware (.bin) لحساب البصمة</span>
+                <input type="file" id="hashFile" accept=".bin,application/octet-stream">
+              </label>
+              <span style="font-size:0.8rem;color:var(--text-muted)">أو الصق بصمة SHA-256 المرجعية أدناه للمطابقة التلقائية (اختياري)</span>
+              <input type="text" id="expectedHashInput" class="input mono" style="max-width:620px;direction:ltr;text-align:center;font-size:0.8rem" placeholder="Optional: Paste expected SHA-256 checksum to auto-verify...">
+              <div id="hashOutput" class="fw-hash-output" style="width:100%"></div>
+            </div>
+          </div>
+
+          <div class="pillar-card-footer">
+            <div class="pillar-tags">
+              <span class="pillar-tag mono">Zero-Upload</span>
+              <span class="pillar-tag mono">Web Crypto SubtleDigest</span>
+              <span class="pillar-tag mono">SHA-256 Bitwise Audit</span>
+            </div>
+            <a href="/c9z_store/pages/C9Z-Web-Flasher.html" class="pillar-action-link">
+              <span>الانتقال إلى Web Flasher</span>
+              <span data-icon="arrow-left" class="icon icon-sm"></span>
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Live Changelog Stream from Server API -->
+    <section class="section" id="live-changelog" style="padding-top:0">
+      <div class="container">
+        <div class="section-header" data-reveal="up">
+          <div>
+            <div class="section-eyebrow">
+              <span data-icon="git-branch" class="icon icon-sm"></span>
+              <span>LIVE LAB STREAM // /api/changelog</span>
+            </div>
+            <h2 class="section-title">سجل التحديثات الحية من المختبر</h2>
+            <p class="section-subtitle">أحدث الترقيات البرمجية والتطورات العتادية المتزامنة مباشرة مع قاعدة بيانات المختبر.</p>
+          </div>
+        </div>
+
+        <div class="c9z-releases-grid" id="fw-live-changelog" data-stagger-group>
+          <!-- Populated from /api/changelog -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Unified Tactical Hardware Subsystems & Command Footer (v3.0) -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-subsystems-deck">
+        <div class="footer-components-header">
+          <div class="footer-strip-eyebrow">
+            <span class="footer-strip-code">HW.BUS</span>
+            <h2 class="footer-strip-label">
+              <span data-icon="microchip" class="icon icon-sm"></span>
+              <span>بنية المكونات الهندسية والأنظمة</span>
+            </h2>
+          </div>
+          <div class="footer-strip-actions">
+            <span class="footer-strip-meta">6 SUBSYSTEMS // DIRECT FILTER</span>
+            <a href="/c9z_store/pages/shop.html?cat=all" class="footer-strip-link">
+              <span>كافة المكونات</span>
+              <span data-icon="chevron-left" class="icon icon-sm"></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-components-strip" data-stagger-group>
+          <a href="/c9z_store/pages/shop.html?cat=wifi-ble" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">01</span><span>//</span><span>RF.WIFI</span></span>
+              <span class="footer-comp-spec">2.4 / 5 GHz</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="wifi" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">ESP32-C5 / S3 Dual-Band</div>
+                <p class="footer-comp-desc">معمارية ثنائية النواة لاختبار شبكات Wi-Fi 6 و BLE</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">802.11ax · BLE 5.3</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/c9z_store/pages/shop.html?cat=rf-subghz" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">02</span><span>//</span><span>SUB.GHZ</span></span>
+              <span class="footer-comp-spec">300–928 MHz</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="radio" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">CC1101 Sub-GHz RF</div>
+                <p class="footer-comp-desc">وحدات إرسال واستقبال الترددات دون الجيجاهيرتز</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">ASK / FSK / OOK</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/c9z_store/pages/shop.html?cat=rf-subghz" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">03</span><span>//</span><span>PA.LNA</span></span>
+              <span class="footer-comp-spec">PA+LNA 20dBm</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="radar" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">nRF24L01+ PA+LNA</div>
+                <p class="footer-comp-desc">وحدات المسح اللاسلكي المكبرة للطيف والتردد</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">SPI · 2.4 GHz RF</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/c9z_store/pages/shop.html?cat=nfc-rfid" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">04</span><span>//</span><span>NFC.ISO</span></span>
+              <span class="footer-comp-spec">13.56 MHz / LF</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="nfc" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">PN532 / Proxmark3 NFC</div>
+                <p class="footer-comp-desc">قراءة ومحاكاة بطاقات RFID و NFC الاحترافية</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">ISO14443A · LF 125kHz</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/c9z_store/pages/shop.html?cat=bundles" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">05</span><span>//</span><span>ANT.SMA</span></span>
+              <span class="footer-comp-spec">SMA 5dBi</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="antenna" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">SMA Antenna Array</div>
+                <p class="footer-comp-desc">مجموعة هوائيات عالية الكسب وحقائب الحقل الكاملة</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">50Ω RG316 · FIELD KIT</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/c9z_store/pages/C9Z-Web-Flasher.html" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">06</span><span>//</span><span>USB.0x0</span></span>
+              <span class="footer-comp-spec">WEB SERIAL 0x0</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="usb" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">USB Web Flasher</div>
+                <p class="footer-comp-desc">تثبيت وبناء الفيرموير المدمج مباشرة عبر المتصفح</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">UART 115200 · CH340</span>
+              <span class="footer-comp-cta"><span>فتح الأداة</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-brand-bar">
+        <div class="footer-brand-top">
+          <a href="/c9z_store/" class="brand-logo">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>c9zwolf</span>
+            <span class="brand-tag" data-dev-trigger>IRAQ SEC LAB</span>
+          </a>
+          <div class="footer-ops-pill">
+            <span class="footer-ops-dot" aria-hidden="true"></span>
+            <span>CORE v3.0 // LIVE PRODUCTION</span>
+          </div>
+        </div>
+        <p class="footer-note">
+          تنبيه أمني: احرص دائماً على أخذ نسخة احتياطية (Dump/Backup) للفلاش الحالي قبل الترقية. جميع الأدوات مخصصة للبحث والفحص المصرح به فقط.
+        </p>
+      </div>
+
+      <div class="footer-grid">
+        <div class="footer-nav-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">مكونات المتجر</h3>
+            <span class="footer-col-code">STORE // 05</span>
+          </div>
+          <ul class="footer-links-list">
+            <li><a href="/c9z_store/pages/shop.html?cat=all"><span data-icon="layers" class="icon icon-sm"></span><span class="footer-link-label">كافة الأجهزة والعتاد</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/c9z_store/pages/shop.html?cat=wifi-ble"><span data-icon="wifi" class="icon icon-sm"></span><span class="footer-link-label">مختبرات Wi-Fi &amp; BLE</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/c9z_store/pages/shop.html?cat=rf-subghz"><span data-icon="radio" class="icon icon-sm"></span><span class="footer-link-label">أجهزة Sub-GHz RF</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/c9z_store/pages/shop.html?cat=nfc-rfid"><span data-icon="nfc" class="icon icon-sm"></span><span class="footer-link-label">أدوات NFC &amp; RFID</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/c9z_store/pages/shop.html?cat=bundles"><span data-icon="package" class="icon icon-sm"></span><span class="footer-link-label">الحقائب الاحترافية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+          </ul>
+        </div>
+
+        <div class="footer-nav-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">المختبر والفيرموير</h3>
+            <span class="footer-col-code">LAB // 04</span>
+          </div>
+          <ul class="footer-links-list">
+            <li><a href="/c9z_store/pages/C9Z-Web-Flasher.html"><span data-icon="zap" class="icon icon-sm"></span><span class="footer-link-label">Web Flasher المباشر</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/c9z_store/pages/firmware.html"><span data-icon="download" class="icon icon-sm"></span><span class="footer-link-label">مستودع الأنظمة الرسمية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/c9z_store/pages/firmware.html#verify"><span data-icon="shield-check" class="icon icon-sm"></span><span class="footer-link-label">فحص بصمة SHA-256</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/c9z_store/pages/shop.html"><span data-icon="truck" class="icon icon-sm"></span><span class="footer-link-label">الشحن لـ 18 محافظة عراقية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+          </ul>
+        </div>
+
+        <div class="footer-social-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">القنوات والمجتمع الرسمي</h3>
+            <span class="footer-col-code">NET // 05</span>
+          </div>
+          <div class="social-cards-list">
+            <a href="https://t.me/c9z_4" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="telegram">
+              <span class="social-card-icon"><span data-icon="telegram" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">قناة تيليجرام</span>
+                <span class="social-card-handle">@c9z_4</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://t.me/c9zwolfbot" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="bot">
+              <span class="social-card-icon"><span data-icon="bot" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">بوت الطلبات والدعم</span>
+                <span class="social-card-handle">@c9zwolfbot</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://www.instagram.com/c9z.4" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="instagram">
+              <span class="social-card-icon"><span data-icon="instagram" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">إنستغرام الرسمي</span>
+                <span class="social-card-handle">@c9z.4</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://www.youtube.com/@c9zwolf" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="youtube">
+              <span class="social-card-icon"><span data-icon="youtube" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">شروحات يوتيوب</span>
+                <span class="social-card-handle">@c9zwolf</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://github.com/c9zwolf" target="_blank" rel="noopener noreferrer" class="social-card social-card-wide" data-platform="github">
+              <span class="social-card-icon"><span data-icon="github" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">مستودع المصادر المفتوحة</span>
+                <span class="social-card-handle">github.com/c9zwolf</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-badge">OPEN SOURCE</span>
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 c9zwolf — جميع الحقوق محفوظة · العراق</span>
+        <div class="footer-pay-badges">
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>ZainCash</span></span>
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>AsiaHawala</span></span>
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>QiCard / Cards</span></span>
+          <span class="footer-pay-pill"><span data-icon="truck" class="icon icon-sm"></span><span>COD 18 محافظة</span></span>
+          <span class="footer-pay-pill"><span data-icon="lock" class="icon icon-sm"></span><span>SHA-256 Verified</span></span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Storefront & UI Scripts -->
+  <script src="/c9z_store/vendor/gsap/gsap.min.js"></script>
+  <script src="/c9z_store/vendor/gsap/ScrollTrigger.min.js"></script>
+  <script src="/c9z_store/assets/js/gh-pages-shim.js"></script>
+  <script src="/c9z_store/assets/js/icons.js"></script>
+  <script src="/c9z_store/assets/js/motion.js"></script>
+  <script src="/c9z_store/assets/js/tactical-ui.js"></script>
+  <script src="/c9z_store/vendor/three/three.min.js"></script>
+  <script src="/c9z_store/assets/js/order-ceremony-3d.js"></script>
+  <script src="/c9z_store/assets/js/cart.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const menuBtn = document.getElementById('mobile-menu-toggle');
+      const navLinks = document.getElementById('fw-nav-links');
+      if (menuBtn && navLinks) {
+        menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+      }
+
+      // Bind firmware filter tabs
+      const fwTabs = document.getElementById('fw-filter-tabs');
+      const fwGrid = document.getElementById('fw-cards-grid');
+      if (fwTabs && fwGrid) {
+        fwTabs.addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-fw-cat]');
+          if (!btn) return;
+          const cat = btn.getAttribute('data-fw-cat') || 'all';
+          fwTabs.querySelectorAll('.category-tab').forEach((b) => {
+            const match = b === btn;
+            b.classList.toggle('active', match);
+            b.setAttribute('aria-selected', match ? 'true' : 'false');
+          });
+          fwGrid.querySelectorAll('.c9z-release-card').forEach((card) => {
+            const tags = (card.getAttribute('data-fw-tags') || '').split(/\s+/);
+            card.style.display = (cat === 'all' || tags.includes(cat)) ? 'flex' : 'none';
+          });
+        });
+      }
+
+      // Bind copy buttons
+      function bindCopyButtons(root) {
+        (root || document).querySelectorAll('[data-copy-hash]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const val = btn.getAttribute('data-copy-hash') || '';
+            if (!val) return;
+            try {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(val);
+              }
+            } catch (_) {}
+            btn.innerHTML = `${C9ZIcons.render('check', 'icon icon-sm')} <span>تم النسخ</span>`;
+            setTimeout(() => {
+              btn.innerHTML = `${C9ZIcons.render('copy', 'icon icon-sm')} <span>نسخ</span>`;
+            }, 1800);
+          });
+        });
+      }
+
+      // Local SHA-256 File Verifier
+      let lastComputedHash = '';
+      const hashFile = document.getElementById('hashFile');
+      const hashOutput = document.getElementById('hashOutput');
+      const expectedHashInput = document.getElementById('expectedHashInput');
+
+      function updateHashStatus(fileInfo) {
+        if (!hashOutput || !lastComputedHash) return;
+        const expected = (expectedHashInput && expectedHashInput.value || '').trim().toLowerCase();
+        hashOutput.style.display = 'block';
+        hashOutput.classList.remove('is-error', 'is-warn');
+
+        let verdict = '';
+        if (expected) {
+          if (expected === lastComputedHash) {
+            verdict = '\nSTATUS: VERIFIED MATCH // البصمة متطابقة تماماً ✓';
+          } else {
+            hashOutput.classList.add('is-error');
+            verdict = '\nSTATUS: CHECKSUM MISMATCH // تحذير: البصمة غير متطابقة!';
+          }
+        }
+        hashOutput.textContent = `FILE: ${fileInfo.name} (${(fileInfo.size / 1024).toFixed(1)} KB)\nSHA-256: ${lastComputedHash}${verdict}`;
+      }
+
+      let lastFileInfo = null;
+      if (hashFile && hashOutput) {
+        hashFile.addEventListener('change', async function (e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          lastFileInfo = { name: file.name, size: file.size };
+          hashOutput.style.display = 'block';
+          hashOutput.classList.remove('is-error');
+          hashOutput.classList.add('is-warn');
+          hashOutput.textContent = 'COMPUTING SHA-256 CHECKSUM... ' + file.name;
+          try {
+            const buffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            lastComputedHash = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+            updateHashStatus(lastFileInfo);
+          } catch (err) {
+            lastComputedHash = '';
+            hashOutput.classList.remove('is-warn');
+            hashOutput.classList.add('is-error');
+            hashOutput.textContent = 'HASH AUDIT FAILED: ' + err.message;
+          }
+        });
+      }
+
+      if (expectedHashInput) {
+        expectedHashInput.addEventListener('input', () => {
+          if (lastComputedHash && lastFileInfo) updateHashStatus(lastFileInfo);
+        });
+      }
+
+      const RELEASE_FALLBACKS = {
+        'v2.4.0': { model_target: 'C9Z-2 / C9Z-4 / C9Z-7', sha256_hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' },
+        'v2.3.5': { model_target: 'C9Z-2 / C9Z-4 (PN532)', sha256_hash: '8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4' },
+        'v2.3.0': { model_target: 'جميع سلسلة C9Z', sha256_hash: '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' },
+        'v2.2.1': { model_target: 'C9Z-2 / C9Z-3 / C9Z-4', sha256_hash: '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a' }
+      };
+
+      async function loadChangelog() {
+        const grid = document.getElementById('fw-live-changelog');
+        if (!grid) return;
+        try {
+          const res = await fetch('/api/changelog');
+          const data = await res.json();
+          if (!res.ok || !Array.isArray(data.items)) return;
+
+          grid.innerHTML = data.items.map((item) => {
+            const isReleased = item.status === 'released';
+            const fb = RELEASE_FALLBACKS[String(item.version || '').trim()] || {};
+            const targetModel = item.model_target || fb.model_target || 'ALL C9Z';
+            const shaHash = item.sha256_hash || fb.sha256_hash || '';
+            const shortHash = shaHash ? `${shaHash.slice(0, 12)}...${shaHash.slice(-8)}` : 'PENDING-LAB-BUILD-SIGN';
+
+            return `
+              <article class="feature-card c9z-release-card ${isReleased ? 'is-released' : 'is-roadmap'}">
+                <div class="release-card-topbar">
+                  <div class="release-ver-group">
+                    <span class="release-dot ${isReleased ? 'is-live' : 'is-dev'}"></span>
+                    <span class="release-ver-pill mono">${C9ZStore.esc(item.version)}</span>
+                    <span class="release-cat-tag">${C9ZStore.esc(item.category || 'firmware')}</span>
+                  </div>
+                  <span class="badge ${isReleased ? 'badge-positive' : 'badge-warning'}">${isReleased ? 'مستقر ومتاح' : 'قيد التطوير'}</span>
+                </div>
+                <div class="release-card-body">
+                  <div class="release-meta-row">
+                    <span class="release-target-chip mono">${C9ZIcons.render('cpu', 'icon icon-sm')} <span>TARGET: ${C9ZStore.esc(targetModel)}</span></span>
+                    <span class="release-date-chip mono">${C9ZStore.esc(item.release_date || '2026-11')}</span>
+                  </div>
+                  <h3 class="release-card-title">${C9ZStore.esc(item.title)}</h3>
+                  <p class="release-card-desc">${C9ZStore.esc(item.summary)}</p>
+                  <div class="release-hash-box">
+                    <div class="release-hash-label">${C9ZIcons.render('shield-check', 'icon icon-sm')} <span class="mono">SHA-256:</span></div>
+                    <code class="release-hash-code mono">${C9ZStore.esc(shortHash)}</code>
+                    ${shaHash ? `<button type="button" class="release-hash-copy" data-copy-hash="${C9ZStore.esc(shaHash)}">${C9ZIcons.render('copy', 'icon icon-sm')} <span>نسخ</span></button>` : ''}
+                  </div>
+                </div>
+                <div class="release-card-footer">
+                  <span class="release-channel-tag mono">CHANNEL // ${isReleased ? 'STABLE-RELEASE' : 'LAB-DEV-BRANCH'}</span>
+                  <a href="/c9z_store/pages/C9Z-Web-Flasher.html" class="pillar-action-link"><span>تثبيت الآن</span> ${C9ZIcons.render('arrow-left', 'icon icon-sm')}</a>
+                </div>
+              </article>
+            `;
+          }).join('');
+          bindCopyButtons(grid);
+        } catch (_) {}
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        await C9ZStore.init();
+        bindCopyButtons(document);
+        loadChangelog();
+      });
+    })();
+  </script>
+</body>
+</html>
