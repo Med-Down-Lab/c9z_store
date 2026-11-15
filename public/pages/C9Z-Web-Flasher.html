@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' blob:; object-src 'none';">
+  <title>C9Z Web Flasher — مثبت الأنظمة عبر المتصفح</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0d0f'/%3E%3Cpath d='M7 22l4-12 5 6 5-6 4 12-9-3z' fill='%23ff0022'/%3E%3C/svg%3E">
+  <meta name="description" content="C9Z Web Flasher — تثبيت وتحديث أنظمة C9Z على شرائح ESP32 عبر USB من المتصفح مباشرة.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (document.getElementById('c9z-fonts-link')) return;
+      var l = document.createElement('link');
+      l.id = 'c9z-fonts-link';
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap';
+      document.head.appendChild(l);
+    }, { once: true });
+  </script>
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"></noscript>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <link rel="stylesheet" href="/assets/css/design-system.css">
+  <style>
+    .flasher-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.8fr);
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 36px;
+    }
+    .flasher-card-inner {
+      padding: 18px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .flasher-field label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .flasher-field input[type="file"] {
+      width: 100%;
+      background: #070709;
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 0.85rem;
+      min-height: 46px;
+    }
+    .flasher-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 6px 0 0;
+    }
+    .flasher-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(6, 6, 9, 0.85);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .flasher-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      display: inline-block;
+    }
+    .flasher-pill .dot.ready {
+      background: var(--positive);
+      box-shadow: 0 0 8px var(--positive);
+    }
+    .flasher-action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .install-wrap {
+      display: flex;
+      align-items: center;
+      min-height: 46px;
+    }
+    .install-wrap[hidden] {
+      display: none;
+    }
+    .install-wrap esp-web-install-button {
+      --esp-tools-button-color: #ff0022;
+      --esp-tools-button-text-color: #ffffff;
+      --esp-tools-button-border-radius: 10px;
+    }
+    .flasher-status {
+      padding: 12px 14px;
+      background: #070709;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+      overflow-wrap: anywhere;
+    }
+    .flasher-status.good {
+      border-color: rgba(76, 195, 138, 0.45);
+      color: #b9f5d6;
+    }
+    .flasher-status.warn {
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #ffd99c;
+    }
+    .flasher-status.bad {
+      border-color: rgba(255, 77, 100, 0.5);
+      color: #ffaaaa;
+    }
+    .flasher-side-list {
+      padding: 0;
+      list-style: none;
+      margin: 0;
+    }
+    .flasher-side-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+    .flasher-side-list li:last-child {
+      border-bottom: none;
+    }
+    .flasher-step-num {
+      flex: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: rgba(255, 0, 34, 0.16);
+      border: 1px solid rgba(255, 0, 34, 0.35);
+      color: #ff6b7f;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.76rem;
+    }
+    .flasher-alert-warn {
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      background: rgba(245, 158, 11, 0.08);
+      color: #ffdfaa;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+    .flasher-alert-danger {
+      border: 1px solid rgba(255, 0, 34, 0.38);
+      background: rgba(255, 0, 34, 0.08);
+      color: #ffc1c1;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+    .hidden {
+      display: none !important;
+    }
+    @media (max-width: 820px) {
+      .flasher-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Unified Tactical Top Navigation -->
+  <header class="site-nav">
+    <div class="container site-nav-inner">
+      <a href="/" class="brand-logo">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>c9zwolf</span>
+        <span class="brand-tag">WEB FLASHER</span>
+      </a>
+
+      <nav aria-label="التنقل الرئيسي">
+        <ul class="nav-links" id="flasher-nav-links">
+          <li><a href="/">الرئيسية</a></li>
+          <li><a href="/pages/shop.html">المتجر الكامل</a></li>
+          <li><a href="/pages/firmware.html">الفيرموير</a></li>
+          <li><a href="/pages/C9Z-Web-Flasher.html" class="active">Web Flasher</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="cart-trigger-btn" data-action="open-cart" aria-label="فتح سلة المشتريات">
+          <span data-icon="shopping-bag"></span>
+          <span>السلة</span>
+          <span class="cart-count-pill" data-cart-count>0</span>
+        </button>
+        <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="القائمة">
+          <span data-icon="menu"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" style="padding-top:36px;padding-bottom:44px">
+      <div class="container">
+        <div class="section-header" data-reveal="up">
+          <div>
+            <div class="section-eyebrow">
+              <span data-icon="terminal" class="icon icon-sm"></span>
+              <span>USB • SERIAL • ESP32 ENGINE</span>
+            </div>
+            <h1 class="section-title" style="font-size:clamp(1.85rem,4vw,2.6rem)">C9Z Web Flasher المباشر</h1>
+            <p class="section-subtitle">ثبّت أو حدّث نظام C9Z على اللوحات المتوافقة مباشرة من المتصفح عبر USB-C. اختر اللوحة وحدد ملف <code>.bin</code> المدمج ثم ابدأ التفليش.</p>
+          </div>
+          <div class="flex items-center gap-2" style="flex-wrap:wrap">
+            <a href="/pages/firmware.html#verify" class="btn btn-secondary btn-sm">
+              <span data-icon="shield-check" class="icon icon-sm"></span>
+              <span>فحص بصمة SHA-256</span>
+            </a>
+            <a href="#requirements" class="btn btn-ghost btn-sm">
+              <span data-icon="layers" class="icon icon-sm"></span>
+              <span>جدول التوافق</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Tactical Flasher Telemetry Deck -->
+        <div class="c9z-releases-deck" data-reveal="up">
+          <div class="pillars-telemetry-strip">
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot is-green"></span>
+              <span class="pillar-stat-label">محرك التفليش المباشر:</span>
+              <strong class="mono">ESP-WEB-TOOLS + WEB SERIAL</strong>
+            </div>
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot"></span>
+              <span class="pillar-stat-label">سرعة المنفذ التسلسلي:</span>
+              <strong class="mono">AUTO HIGH-SPEED BAUD</strong>
+            </div>
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot is-green"></span>
+              <span class="pillar-stat-label">بنية الحزمة المطلوبة:</span>
+              <strong class="mono">MERGED 0x0 BINARY</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-Column Flasher Dossier Layout -->
+        <div class="flasher-layout">
+          <!-- Left Card: Flasher Console Dossier -->
+          <article class="feature-card c9z-pillar-card" data-reveal="up">
+            <div class="pillar-card-topbar">
+              <div class="pillar-code-group">
+                <span class="pillar-num mono">01</span>
+                <span class="pillar-sep">//</span>
+                <span class="pillar-sys mono">SYS.FLASH-CONSOLE</span>
+              </div>
+              <span class="pillar-domain-badge mono">WEB SERIAL ENGINE</span>
+            </div>
+
+            <div class="flasher-card-inner">
+              <div>
+                <h2 style="margin:0 0 4px;font-size:1.18rem;font-weight:800">لوحة تثبيت النظام عبر USB</h2>
+                <p style="margin:0;color:var(--text-secondary);font-size:0.86rem">اختر نوع اللوحة ثم حمّل ملف <code>.bin</code> المدمج والمبني خصيصاً لها.</p>
+              </div>
+
+              <div class="flasher-field">
+                <label for="board">1. نوع الجهاز / اللوحة المستهدفة</label>
+                <select id="board" class="select">
+                  <option value="cyd">CYD-2432S028 — ESP32</option>
+                  <option value="m5plus2">M5Stick Plus2 — ESP32</option>
+                  <option value="m5s3">M5StickS3 — ESP32-S3</option>
+                  <option value="wroom">ESP32-WROOM-32</option>
+                  <option value="s3">ESP32-S3</option>
+                  <option value="c9z1">C9Z-1</option>
+                  <option value="c9z2">C9Z-2</option>
+                  <option value="c9z3">C9Z-3</option>
+                  <option value="c9z4">C9Z-4</option>
+                  <option value="c9z5">C9Z-5</option>
+                  <option value="c9z6">C9Z-6</option>
+                  <option value="c9z7">C9Z-7</option>
+                  <option value="c9z8">C9Z-8</option>
+                  <option value="c9z9">C9Z-9</option>
+                  <option value="c9z10">C9Z-10</option>
+                  <option value="other">جهاز آخر / لوحة مخصصة</option>
+                </select>
+                <p class="flasher-hint" id="boardHint">الشريحة المحددة: ESP32. تأكد أن ملف النظام مبني للوحة نفسها.</p>
+              </div>
+
+              <div class="flasher-field hidden" id="chipField">
+                <label for="chip">نوع الشريحة الفعلي في جهاز C9Z</label>
+                <select id="chip" class="select">
+                  <option value="ESP32">ESP32</option>
+                  <option value="ESP32-S3">ESP32-S3</option>
+                  <option value="ESP32-C3">ESP32-C3</option>
+                  <option value="ESP32-S2">ESP32-S2</option>
+                  <option value="ESP32-C6">ESP32-C6</option>
+                  <option value="ESP32-H2">ESP32-H2</option>
+                  <option value="ESP32-P4">ESP32-P4</option>
+                </select>
+                <p class="flasher-hint">اختر النوع حسب الشريحة الفعلية، وليس اسم المنتج فقط.</p>
+              </div>
+
+              <div class="flasher-field">
+                <label for="firmware">2. ملف Firmware المدمج (.bin)</label>
+                <input id="firmware" type="file" accept=".bin,application/octet-stream">
+                <p class="flasher-hint">يجب أن يكون ملفاً مدمجاً يبدأ من العنوان <code>0x0</code>، ويحتوي على bootloader و partition table والتطبيق الصحيح لهذا الجهاز.</p>
+              </div>
+
+              <div class="flasher-action-row">
+                <span id="filePill" class="flasher-pill mono"><span class="dot"></span><span id="fileLabel">لم يتم اختيار ملف</span></span>
+                <div class="install-wrap" id="installWrap" hidden>
+                  <esp-web-install-button id="installButton">
+                    <button slot="activate">Connect &amp; Install C9Z</button>
+                    <span slot="unsupported">هذا المتصفح لا يدعم Web Serial. استخدم Chrome أو Edge على الكمبيوتر عبر HTTPS أو localhost.</span>
+                    <span slot="not-allowed">يجب فتح الصفحة عبر HTTPS أو localhost، وليس من ملف محلي.</span>
+                  </esp-web-install-button>
+                </div>
+              </div>
+
+              <div id="status" class="flasher-status warn" role="status" aria-live="polite">بانتظار اختيار ملف Firmware. لا يبدأ التثبيت قبل اختياره.</div>
+
+              <div class="flasher-alert-warn">
+                <strong>قبل التثبيت:</strong> استخدم كابل USB يدعم نقل البيانات، وأغلق Arduino Serial Monitor أو أي برنامج يستخدم المنفذ. قد يُمسح النظام والبيانات الموجودة على الجهاز.
+              </div>
+              <div class="flasher-alert-danger">
+                <strong>تنبيه:</strong> تأكد دائماً من تنزيل ملفات الـ Firmware من مصدر موثوق والتحقق من بصمة التجزئة (Hash). لا تفلش ملفاً مخصصاً لشريحة أو لوحة مختلفة حتى لا يتعطل الجهاز.
+              </div>
+            </div>
+          </article>
+
+          <!-- Right Card: Field Manual Dossier -->
+          <aside class="feature-card c9z-pillar-card" data-reveal="up">
+            <div class="pillar-card-topbar">
+              <div class="pillar-code-group">
+                <span class="pillar-num mono">02</span>
+                <span class="pillar-sep">//</span>
+                <span class="pillar-sys mono">DOC.FIELD-MANUAL</span>
+              </div>
+              <span class="pillar-domain-badge mono">BOOTLOADER PROTOCOL</span>
+            </div>
+
+            <div class="flasher-card-inner">
+              <div>
+                <h2 style="margin:0 0 4px;font-size:1.12rem;font-weight:800">طريقة الاستخدام الميداني</h2>
+                <p style="margin:0;color:var(--text-secondary);font-size:0.84rem">اتبع الخطوات الخمس قبل الضغط على التثبيت.</p>
+              </div>
+
+              <ol class="flasher-side-list">
+                <li>
+                  <span class="flasher-step-num mono">1</span>
+                  <span>تأكد من اسم اللوحة والشريحة الموجودة فعلياً داخل الجهاز.</span>
+                </li>
+                <li>
+                  <span class="flasher-step-num mono">2</span>
+                  <span>اختر ملف C9Z المدمج بصيغة <code>.bin</code> والمناسب لهذه اللوحة.</span>
+                </li>
+                <li>
+                  <span class="flasher-step-num mono">3</span>
+                  <span>وصل الجهاز بالكمبيوتر عبر كابل بيانات USB-C، ثم اضغط Connect &amp; Install.</span>
+                </li>
+                <li>
+                  <span class="flasher-step-num mono">4</span>
+                  <span>اختر المنفذ التسلسلي الصحيح من نافذة المتصفح ووافق على بدء التفليش.</span>
+                </li>
+                <li>
+                  <span class="flasher-step-num mono">5</span>
+                  <span>لا تفصل الكابل حتى تظهر رسالة اكتمال العملية وإعادة التشغيل.</span>
+                </li>
+              </ol>
+
+              <div class="flasher-alert-warn">
+                إذا لم يظهر المنفذ، جرّب كابل بيانات آخر، أو تعريف USB-to-Serial المناسب (CH340 / CP2102)، أو اضغط زر <code>BOOT</code> أثناء التوصيل.
+              </div>
+            </div>
+
+            <div class="pillar-card-footer">
+              <div class="pillar-tags">
+                <span class="pillar-tag mono">CH340</span>
+                <span class="pillar-tag mono">CP2102</span>
+                <span class="pillar-tag mono">NATIVE USB</span>
+              </div>
+              <a href="/pages/firmware.html" class="pillar-action-link">
+                <span>مستودع الأنظمة</span>
+                <span data-icon="arrow-left" class="icon icon-sm"></span>
+              </a>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Hardware Compatibility Requirements Matrix -->
+        <section id="requirements" style="margin-top:16px">
+          <div class="section-header" data-reveal="up" style="margin-bottom:18px">
+            <div>
+              <div class="section-eyebrow">
+                <span data-icon="layers" class="icon icon-sm"></span>
+                <span>MAT.HW-COMPATIBILITY // 0x0 PARTITION MAP</span>
+              </div>
+              <h2 class="section-title">ملفات Firmware المطلوبة لكل لوحة</h2>
+              <p class="section-subtitle">لا يمكن تحديد ملف واحد لكل الأجهزة لمجرد أنها تحمل اسم C9Z؛ يجب بناء Firmware مطابق لكل نوع شريحة وتخطيط فلاش.</p>
+            </div>
+          </div>
+
+          <div class="matrix-wrap c9z-matrix-shell" data-reveal="up">
+            <table class="matrix-table c9z-matrix-table" style="min-width:680px">
+              <thead>
+                <tr>
+                  <th>الجهاز / اللوحة</th>
+                  <th>نوع الشريحة المتوقع</th>
+                  <th>الملف المطلوب للفلاشر</th>
+                  <th>الحالة الفنية</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="matrix-row is-available">
+                  <td><span class="matrix-model-code mono">CYD-2432S028</span></td>
+                  <td><span class="matrix-mcu-chip mono">ESP32</span></td>
+                  <td><code>c9z-cyd-merged.bin</code></td>
+                  <td><span class="badge badge-positive">يتطلب البناء المطابق للوحة</span></td>
+                </tr>
+                <tr class="matrix-row is-available">
+                  <td><span class="matrix-model-code mono">M5Stick Plus2</span></td>
+                  <td><span class="matrix-mcu-chip mono">ESP32</span></td>
+                  <td><code>c9z-m5stick-plus2-merged.bin</code></td>
+                  <td><span class="badge badge-positive">يتطلب البناء المطابق للوحة</span></td>
+                </tr>
+                <tr class="matrix-row is-available">
+                  <td><span class="matrix-model-code mono">M5StickS3</span></td>
+                  <td><span class="matrix-mcu-chip mono">ESP32-S3</span></td>
+                  <td><code>c9z-m5sticks3-merged.bin</code></td>
+                  <td><span class="badge badge-positive">يتطلب البناء المطابق للوحة</span></td>
+                </tr>
+                <tr class="matrix-row">
+                  <td><span class="matrix-model-code mono">ESP32-WROOM-32</span></td>
+                  <td><span class="matrix-mcu-chip mono">ESP32</span></td>
+                  <td><code>c9z-wroom32-merged.bin</code></td>
+                  <td><span class="badge badge-neutral">يتطلب تحديد GPIO والذاكرة</span></td>
+                </tr>
+                <tr class="matrix-row">
+                  <td><span class="matrix-model-code mono">ESP32-S3</span></td>
+                  <td><span class="matrix-mcu-chip mono">ESP32-S3</span></td>
+                  <td><code>c9z-esp32s3-merged.bin</code></td>
+                  <td><span class="badge badge-neutral">يتطلب تحديد اللوحة والذاكرة</span></td>
+                </tr>
+                <tr class="matrix-row is-available">
+                  <td><span class="matrix-model-code mono">C9Z-1 إلى C9Z-10</span></td>
+                  <td><span class="matrix-mcu-chip mono">حسب القطعة</span></td>
+                  <td><code>c9z-N-merged.bin</code></td>
+                  <td><span class="badge badge-accent">يجب توثيق الشريحة لكل موديل</span></td>
+                </tr>
+                <tr class="matrix-row">
+                  <td><span class="matrix-model-code mono">لوحات أخرى</span></td>
+                  <td><span class="matrix-mcu-chip mono">ESP32 Family</span></td>
+                  <td>ملف مدمج خاص باللوحة</td>
+                  <td><span class="badge badge-neutral">تحقق من توافق الشريحة</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p style="margin-top:14px;font-size:0.84rem;color:var(--text-muted)">
+            ملف ESP32 المدمج يجمع <code>bootloader</code> و <code>partition table</code> و <code>boot_app0</code> والتطبيق في ملف واحد مع عناوين الفلاش الصحيحة. لا تستخدم ملفاً مدمجاً عاماً دون التحقق من إعدادات اللوحة.
+          </p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- Unified Tactical Hardware Subsystems & Command Footer (v3.0) -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-subsystems-deck">
+        <div class="footer-components-header">
+          <div class="footer-strip-eyebrow">
+            <span class="footer-strip-code">HW.BUS</span>
+            <h2 class="footer-strip-label">
+              <span data-icon="microchip" class="icon icon-sm"></span>
+              <span>بنية المكونات الهندسية والأنظمة</span>
+            </h2>
+          </div>
+          <div class="footer-strip-actions">
+            <span class="footer-strip-meta">6 SUBSYSTEMS // DIRECT FILTER</span>
+            <a href="/pages/shop.html?cat=all" class="footer-strip-link">
+              <span>كافة المكونات</span>
+              <span data-icon="chevron-left" class="icon icon-sm"></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-components-strip" data-stagger-group>
+          <a href="/pages/shop.html?cat=wifi-ble" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">01</span><span>//</span><span>RF.WIFI</span></span>
+              <span class="footer-comp-spec">2.4 / 5 GHz</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="wifi" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">ESP32-C5 / S3 Dual-Band</div>
+                <p class="footer-comp-desc">معمارية ثنائية النواة لاختبار شبكات Wi-Fi 6 و BLE</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">802.11ax · BLE 5.3</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=rf-subghz" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">02</span><span>//</span><span>SUB.GHZ</span></span>
+              <span class="footer-comp-spec">300–928 MHz</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="radio" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">CC1101 Sub-GHz RF</div>
+                <p class="footer-comp-desc">وحدات إرسال واستقبال الترددات دون الجيجاهيرتز</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">ASK / FSK / OOK</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=rf-subghz" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">03</span><span>//</span><span>PA.LNA</span></span>
+              <span class="footer-comp-spec">PA+LNA 20dBm</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="radar" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">nRF24L01+ PA+LNA</div>
+                <p class="footer-comp-desc">وحدات المسح اللاسلكي المكبرة للطيف والتردد</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">SPI · 2.4 GHz RF</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=nfc-rfid" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">04</span><span>//</span><span>NFC.ISO</span></span>
+              <span class="footer-comp-spec">13.56 MHz / LF</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="nfc" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">PN532 / Proxmark3 NFC</div>
+                <p class="footer-comp-desc">قراءة ومحاكاة بطاقات RFID و NFC الاحترافية</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">ISO14443A · LF 125kHz</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=bundles" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">05</span><span>//</span><span>ANT.SMA</span></span>
+              <span class="footer-comp-spec">SMA 5dBi</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="antenna" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">SMA Antenna Array</div>
+                <p class="footer-comp-desc">مجموعة هوائيات عالية الكسب وحقائب الحقل الكاملة</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">50Ω RG316 · FIELD KIT</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/C9Z-Web-Flasher.html" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">06</span><span>//</span><span>USB.0x0</span></span>
+              <span class="footer-comp-spec">WEB SERIAL 0x0</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="usb" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">USB Web Flasher</div>
+                <p class="footer-comp-desc">تثبيت وبناء الفيرموير المدمج مباشرة عبر المتصفح</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">UART 115200 · CH340</span>
+              <span class="footer-comp-cta"><span>فتح الأداة</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-brand-bar">
+        <div class="footer-brand-top">
+          <a href="/" class="brand-logo">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>c9zwolf</span>
+            <span class="brand-tag" data-dev-trigger>IRAQ SEC LAB</span>
+          </a>
+          <div class="footer-ops-pill">
+            <span class="footer-ops-dot" aria-hidden="true"></span>
+            <span>CORE v3.0 // WEB SERIAL 0x0</span>
+          </div>
+        </div>
+        <p class="footer-note">
+          USB flashing powered by <a href="https://github.com/esphome/esp-web-tools" target="_blank" rel="noopener noreferrer">ESP Web Tools</a>. جميع الأدوات مخصصة للبحث والفحص المصرح به فقط.
+        </p>
+      </div>
+
+      <div class="footer-grid">
+        <div class="footer-nav-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">مكونات المتجر</h3>
+            <span class="footer-col-code">STORE // 05</span>
+          </div>
+          <ul class="footer-links-list">
+            <li><a href="/pages/shop.html?cat=all"><span data-icon="layers" class="icon icon-sm"></span><span class="footer-link-label">كافة الأجهزة والعتاد</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=wifi-ble"><span data-icon="wifi" class="icon icon-sm"></span><span class="footer-link-label">مختبرات Wi-Fi &amp; BLE</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=rf-subghz"><span data-icon="radio" class="icon icon-sm"></span><span class="footer-link-label">أجهزة Sub-GHz RF</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=nfc-rfid"><span data-icon="nfc" class="icon icon-sm"></span><span class="footer-link-label">أدوات NFC &amp; RFID</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=bundles"><span data-icon="package" class="icon icon-sm"></span><span class="footer-link-label">الحقائب الاحترافية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+          </ul>
+        </div>
+
+        <div class="footer-nav-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">المختبر والفيرموير</h3>
+            <span class="footer-col-code">LAB // 04</span>
+          </div>
+          <ul class="footer-links-list">
+            <li><a href="/pages/C9Z-Web-Flasher.html"><span data-icon="zap" class="icon icon-sm"></span><span class="footer-link-label">Web Flasher المباشر</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/firmware.html"><span data-icon="download" class="icon icon-sm"></span><span class="footer-link-label">مستودع الأنظمة الرسمية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/firmware.html#verify"><span data-icon="shield-check" class="icon icon-sm"></span><span class="footer-link-label">فحص بصمة SHA-256</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html"><span data-icon="truck" class="icon icon-sm"></span><span class="footer-link-label">الشحن لـ 18 محافظة عراقية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+          </ul>
+        </div>
+
+        <div class="footer-social-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">القنوات والمجتمع الرسمي</h3>
+            <span class="footer-col-code">NET // 05</span>
+          </div>
+          <div class="social-cards-list">
+            <a href="https://t.me/c9z_4" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="telegram">
+              <span class="social-card-icon"><span data-icon="telegram" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">قناة تيليجرام</span>
+                <span class="social-card-handle">@c9z_4</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://t.me/c9zwolfbot" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="bot">
+              <span class="social-card-icon"><span data-icon="bot" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">بوت الطلبات والدعم</span>
+                <span class="social-card-handle">@c9zwolfbot</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://www.instagram.com/c9z.4" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="instagram">
+              <span class="social-card-icon"><span data-icon="instagram" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">إنستغرام الرسمي</span>
+                <span class="social-card-handle">@c9z.4</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://www.youtube.com/@c9zwolf" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="youtube">
+              <span class="social-card-icon"><span data-icon="youtube" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">شروحات يوتيوب</span>
+                <span class="social-card-handle">@c9zwolf</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://github.com/c9zwolf" target="_blank" rel="noopener noreferrer" class="social-card social-card-wide" data-platform="github">
+              <span class="social-card-icon"><span data-icon="github" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">مستودع المصادر المفتوحة</span>
+                <span class="social-card-handle">github.com/c9zwolf</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-badge">OPEN SOURCE</span>
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 c9zwolf — جميع الحقوق محفوظة · العراق</span>
+        <div class="footer-pay-badges">
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>ZainCash</span></span>
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>AsiaHawala</span></span>
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>QiCard / Cards</span></span>
+          <span class="footer-pay-pill"><span data-icon="truck" class="icon icon-sm"></span><span>COD 18 محافظة</span></span>
+          <span class="footer-pay-pill"><span data-icon="lock" class="icon icon-sm"></span><span>SHA-256 Verified</span></span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Storefront & Flasher Scripts -->
+  <script src="/vendor/gsap/gsap.min.js"></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js"></script>
+  <script src="/assets/js/icons.js"></script>
+  <script src="/assets/js/motion.js"></script>
+  <script src="/assets/js/tactical-ui.js"></script>
+  <script src="/vendor/three/three.min.js"></script>
+  <script src="/assets/js/order-ceremony-3d.js"></script>
+  <script src="/assets/js/cart.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const menuBtn = document.getElementById('mobile-menu-toggle');
+      const navLinks = document.getElementById('flasher-nav-links');
+      if (menuBtn && navLinks) {
+        menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+      }
+
+      const boardSelect = document.getElementById('board');
+      const chipSelect = document.getElementById('chip');
+      const chipField = document.getElementById('chipField');
+      const firmwareInput = document.getElementById('firmware');
+      const installWrap = document.getElementById('installWrap');
+      const installButton = document.getElementById('installButton');
+      const statusBox = document.getElementById('status');
+      const fileLabel = document.getElementById('fileLabel');
+      const filePill = document.getElementById('filePill');
+      const boardHint = document.getElementById('boardHint');
+
+      let firmwareUrl = null;
+      let manifestUrl = null;
+
+      const fixedBoards = {
+        cyd: { name: 'CYD-2432S028', chip: 'ESP32' },
+        m5plus2: { name: 'M5Stick Plus2', chip: 'ESP32' },
+        m5s3: { name: 'M5StickS3', chip: 'ESP32-S3' },
+        wroom: { name: 'ESP32-WROOM-32', chip: 'ESP32' },
+        s3: { name: 'ESP32-S3', chip: 'ESP32-S3' }
+      };
+
+      function chosenBoard() {
+        const id = boardSelect.value;
+        if (fixedBoards[id]) return { ...fixedBoards[id], id };
+        const label = id === 'other' ? 'Custom ESP board' : id.toUpperCase().replace('C9Z', 'C9Z-');
+        return { name: label, chip: chipSelect.value, id };
+      }
+
+      function revokeUrls() {
+        if (firmwareUrl) URL.revokeObjectURL(firmwareUrl);
+        if (manifestUrl) URL.revokeObjectURL(manifestUrl);
+        firmwareUrl = null;
+        manifestUrl = null;
+      }
+
+      function setStatus(message, kind = 'warn') {
+        statusBox.textContent = message;
+        statusBox.className = 'flasher-status ' + kind;
+      }
+
+      function refreshBoard() {
+        const custom = !(boardSelect.value in fixedBoards);
+        chipField.classList.toggle('hidden', !custom);
+        const board = chosenBoard();
+        boardHint.textContent = 'الشريحة المحددة: ' + board.chip + '. تأكد أن ملف النظام مبني للوحة نفسها.';
+        if (firmwareInput.files.length) buildManifest();
+        else setStatus('اختر ملف Firmware مدمجاً ومناسباً للوحة ' + board.name + '.', 'warn');
+      }
+
+      function buildManifest() {
+        revokeUrls();
+        const file = firmwareInput.files && firmwareInput.files[0];
+        if (!file) {
+          installWrap.hidden = true;
+          fileLabel.textContent = 'لم يتم اختيار ملف';
+          filePill.querySelector('.dot').classList.remove('ready');
+          return;
+        }
+        if (!file.name.toLowerCase().endsWith('.bin')) {
+          installWrap.hidden = true;
+          setStatus('الملف المختار ليس بامتداد .bin. اختر ملف Firmware مدمجاً.', 'bad');
+          return;
+        }
+        const board = chosenBoard();
+        firmwareUrl = URL.createObjectURL(file);
+        const manifest = {
+          name: 'C9Z Firmware - ' + board.name,
+          version: '1.0.0',
+          new_install_prompt_erase: true,
+          builds: [{ chipFamily: board.chip, parts: [{ path: firmwareUrl, offset: 0 }] }]
+        };
+        manifestUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/json' }));
+        installButton.setAttribute('manifest', manifestUrl);
+        installButton.manifest = manifestUrl;
+        installWrap.hidden = false;
+        fileLabel.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+        filePill.querySelector('.dot').classList.add('ready');
+        setStatus('تم تجهيز ملف ' + board.name + '. تأكد أنه ملف merged صالح لهذه اللوحة قبل الاتصال.', 'good');
+      }
+
+      boardSelect.addEventListener('change', refreshBoard);
+      chipSelect.addEventListener('change', refreshBoard);
+      firmwareInput.addEventListener('change', buildManifest);
+      installButton.addEventListener('state-changed', (event) => {
+        const state = event.detail || {};
+        if (state.state === 'finished') {
+          setStatus('اكتملت عملية الفلاش. افصل الجهاز بعد التأكد من انتهاء العملية ثم أعد تشغيله.', 'good');
+        } else if (state.state === 'error') {
+          setStatus('فشل التثبيت: ' + (state.message || 'تحقق من المنفذ والملف وتوافق الشريحة.'), 'bad');
+        } else if (state.message) {
+          setStatus(state.message, 'warn');
+        }
+      });
+
+      refreshBoard();
+
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.C9ZStore && typeof window.C9ZStore.init === 'function') {
+          window.C9ZStore.init();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

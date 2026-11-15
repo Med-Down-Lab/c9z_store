@@ -1,0 +1,28 @@
+{
+  "name": "c9zweb-secure",
+  "version": "2.0.0",
+  "description": "Hardened and secured C9Z Web E-Commerce Storefront, Payment Engine & Developer Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "dev": "node --no-warnings --watch server.js"
+  },
+  "keywords": [
+    "security",
+    "c9z",
+    "esp32",
+    "flasher",
+    "store",
+    "ecommerce"
+  ],
+  "author": "C9Z Security Team",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "gsap": "^3.12.5",
+    "helmet": "^8.0.0",
+    "lucide": "^0.475.0"
+  }
+}

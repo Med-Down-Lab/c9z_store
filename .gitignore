@@ -1,0 +1,37 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Firmware & Binaries (avoid committing raw flashes with potential WiFi credentials)
+*.bin
+*.elf
+*.hex
+*.dump
+
+# Logs & Databases
+*.log
+logs/
+data/orders.log
+*.db-shm
+*.db-wal
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

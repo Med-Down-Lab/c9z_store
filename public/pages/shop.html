@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self';">
+  <title>المتجر المصنف — c9zwolf لأجهزة اختبار الأمان السيبراني</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0d0f'/%3E%3Cpath d='M7 22l4-12 5 6 5-6 4 12-9-3z' fill='%23ff0022'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (document.getElementById('c9z-fonts-link')) return;
+      var l = document.createElement('link');
+      l.id = 'c9z-fonts-link';
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap';
+      document.head.appendChild(l);
+    }, { once: true });
+  </script>
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="stylesheet" href="/assets/css/design-system.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="site-nav">
+    <div class="container site-nav-inner">
+      <a href="/" class="brand-logo">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>c9zwolf</span>
+        <span class="brand-tag">STORE</span>
+      </a>
+
+      <nav aria-label="التنقل الرئيسي">
+        <ul class="nav-links" id="shop-nav-links">
+          <li><a href="/">الرئيسية</a></li>
+          <li><a href="/pages/shop.html" class="active">المتجر الكامل</a></li>
+          <li><a href="/pages/firmware.html">الفيرموير</a></li>
+          <li><a href="/pages/C9Z-Web-Flasher.html">Web Flasher</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="cart-trigger-btn" data-action="open-cart" aria-label="فتح سلة المشتريات">
+          <span data-icon="shopping-bag"></span>
+          <span>السلة</span>
+          <span class="cart-count-pill" data-cart-count>0</span>
+        </button>
+        <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="القائمة">
+          <span data-icon="menu"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Storefront Header & Bestseller Spotlight -->
+    <section class="section" style="padding-top:36px;padding-bottom:32px">
+      <div class="container">
+        <div class="section-header" style="margin-bottom:24px" data-reveal="up">
+          <div>
+            <div class="section-eyebrow">
+              <span data-icon="package" class="icon icon-sm"></span>
+              <span>متجر العتاد السيبراني المعتمد</span>
+            </div>
+            <h1 class="section-title" style="font-size:clamp(1.75rem,3.5vw,2.4rem)">أجهزة الفحص والاختبار المصنفة</h1>
+            <p class="section-subtitle">اختر الفئة المناسبة لمهامك الميدانية — جميع الأجهزة مبرمجة ومفحوصة مع كود خصم ترحيبي <span class="mono text-accent">C9Z10</span>.</p>
+          </div>
+          <div class="flex items-center gap-2" style="flex-wrap:wrap">
+            <span class="badge badge-positive">
+              <span data-icon="truck" class="icon icon-sm"></span>
+              <span>توصيل 18 محافظة (5,000 د.ع)</span>
+            </span>
+            <span class="badge badge-neutral">
+              <span data-icon="shield-check" class="icon icon-sm"></span>
+              <span>دفع عند الاستلام أو محفظة إلكترونية</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Bestseller Spotlight Card -->
+        <div id="bestseller-spotlight" data-reveal="up" style="margin-bottom:32px"></div>
+
+        <!-- Tactical Command Deck: Storefront Filters, Live Counts & Search -->
+        <div class="c9z-command-deck" data-reveal="up" style="margin-bottom:20px">
+          <div class="category-tabs c9z-tactical-tabs" id="shop-category-tabs" role="tablist" aria-label="تصنيفات المتجر">
+            <button type="button" class="category-tab active" role="tab" aria-selected="true" data-cat="all">
+              <span data-icon="grid" class="icon icon-sm"></span>
+              <span>كل الأجهزة</span>
+              <span class="tab-count-pill mono" data-cat-count="all">0</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-cat="bestsellers">
+              <span data-icon="flame" class="icon icon-sm"></span>
+              <span>الأكثر طلباً</span>
+              <span class="tab-count-pill mono" data-cat-count="bestsellers">0</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-cat="wifi-ble">
+              <span data-icon="wifi" class="icon icon-sm"></span>
+              <span>شبكات Wi-Fi &amp; BLE</span>
+              <span class="tab-count-pill mono" data-cat-count="wifi-ble">0</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-cat="rf-subghz">
+              <span data-icon="radio" class="icon icon-sm"></span>
+              <span>ترددات RF &amp; Sub-GHz</span>
+              <span class="tab-count-pill mono" data-cat-count="rf-subghz">0</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-cat="nfc-rfid">
+              <span data-icon="cpu" class="icon icon-sm"></span>
+              <span>بطاقات NFC &amp; RFID</span>
+              <span class="tab-count-pill mono" data-cat-count="nfc-rfid">0</span>
+            </button>
+            <button type="button" class="category-tab" role="tab" aria-selected="false" data-cat="bundles">
+              <span data-icon="package" class="icon icon-sm"></span>
+              <span>الحزم والملحقات</span>
+              <span class="tab-count-pill mono" data-cat-count="bundles">0</span>
+            </button>
+          </div>
+
+          <div class="c9z-deck-controls">
+            <div class="c9z-deck-search">
+              <span data-icon="search" class="icon icon-sm c9z-deck-search-icon"></span>
+              <input type="search" id="shop-search-input" class="input c9z-deck-input" placeholder="ابحث بالاسم أو المعالج (مثال: ESP32-C5 أو C9Z-3)..." aria-label="بحث في منتجات المتجر">
+            </div>
+            <select id="shop-sort-select" class="select c9z-deck-select" aria-label="ترتيب المنتجات">
+              <option value="default">الترتيب الافتراضي</option>
+              <option value="bestseller">الأكثر طلباً أولاً</option>
+              <option value="price-asc">السعر: الأقل أولاً</option>
+              <option value="price-desc">السعر: الأعلى أولاً</option>
+            </select>
+          </div>
+
+          <div class="pillars-telemetry-strip">
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot"></span>
+              <span class="pillar-stat-label">المتجر الرسمي:</span>
+              <strong class="mono">C9Z HARDWARE ARSENAL</strong>
+            </div>
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot is-green"></span>
+              <span class="pillar-stat-label">اختبار الجودة:</span>
+              <strong class="mono">100% BENCH QA VERIFIED</strong>
+            </div>
+            <div class="pillar-stat-chip">
+              <span class="pillar-stat-dot is-green"></span>
+              <span class="pillar-stat-label">التوصيل والدفع:</span>
+              <strong class="mono">ALL 18 GOVS (COD)</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Count & Active Filter Status -->
+        <div class="flex items-center justify-between" style="margin-bottom:16px;font-size:0.84rem;color:var(--text-secondary)">
+          <span id="shop-results-count">جارٍ تحميل الأجهزة...</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="shop-reset-filters" style="display:none">إعادة ضبط الفلاتر</button>
+        </div>
+
+        <!-- Main Product Grid -->
+        <div class="product-grid c9z-hw-grid" id="shop-products-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Unified Tactical Hardware Subsystems & Command Footer (v3.0) -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-subsystems-deck">
+        <div class="footer-components-header">
+          <div class="footer-strip-eyebrow">
+            <span class="footer-strip-code">HW.BUS</span>
+            <h2 class="footer-strip-label">
+              <span data-icon="microchip" class="icon icon-sm"></span>
+              <span>بنية المكونات الهندسية والأنظمة</span>
+            </h2>
+          </div>
+          <div class="footer-strip-actions">
+            <span class="footer-strip-meta">6 SUBSYSTEMS // DIRECT FILTER</span>
+            <a href="/pages/shop.html?cat=all" class="footer-strip-link">
+              <span>كافة المكونات</span>
+              <span data-icon="chevron-left" class="icon icon-sm"></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-components-strip" data-stagger-group>
+          <a href="/pages/shop.html?cat=wifi-ble" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">01</span><span>//</span><span>RF.WIFI</span></span>
+              <span class="footer-comp-spec">2.4 / 5 GHz</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="wifi" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">ESP32-C5 / S3 Dual-Band</div>
+                <p class="footer-comp-desc">معمارية ثنائية النواة لاختبار شبكات Wi-Fi 6 و BLE</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">802.11ax · BLE 5.3</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=rf-subghz" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">02</span><span>//</span><span>SUB.GHZ</span></span>
+              <span class="footer-comp-spec">300–928 MHz</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="radio" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">CC1101 Sub-GHz RF</div>
+                <p class="footer-comp-desc">وحدات إرسال واستقبال الترددات دون الجيجاهيرتز</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">ASK / FSK / OOK</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=rf-subghz" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">03</span><span>//</span><span>PA.LNA</span></span>
+              <span class="footer-comp-spec">PA+LNA 20dBm</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="radar" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">nRF24L01+ PA+LNA</div>
+                <p class="footer-comp-desc">وحدات المسح اللاسلكي المكبرة للطيف والتردد</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">SPI · 2.4 GHz RF</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=nfc-rfid" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">04</span><span>//</span><span>NFC.ISO</span></span>
+              <span class="footer-comp-spec">13.56 MHz / LF</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="nfc" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">PN532 / Proxmark3 NFC</div>
+                <p class="footer-comp-desc">قراءة ومحاكاة بطاقات RFID و NFC الاحترافية</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">ISO14443A · LF 125kHz</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/shop.html?cat=bundles" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">05</span><span>//</span><span>ANT.SMA</span></span>
+              <span class="footer-comp-spec">SMA 5dBi</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="antenna" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">SMA Antenna Array</div>
+                <p class="footer-comp-desc">مجموعة هوائيات عالية الكسب وحقائب الحقل الكاملة</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">50Ω RG316 · FIELD KIT</span>
+              <span class="footer-comp-cta"><span>تصفية القسم</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+
+          <a href="/pages/C9Z-Web-Flasher.html" class="footer-comp-card">
+            <div class="footer-comp-top">
+              <span class="footer-comp-idx"><span class="footer-comp-num">06</span><span>//</span><span>USB.0x0</span></span>
+              <span class="footer-comp-spec">WEB SERIAL 0x0</span>
+            </div>
+            <div class="footer-comp-main">
+              <span class="footer-comp-icon"><span data-icon="usb" class="icon"></span></span>
+              <div class="footer-comp-copy">
+                <div class="footer-comp-name">USB Web Flasher</div>
+                <p class="footer-comp-desc">تثبيت وبناء الفيرموير المدمج مباشرة عبر المتصفح</p>
+              </div>
+            </div>
+            <div class="footer-comp-foot">
+              <span class="footer-comp-bus">UART 115200 · CH340</span>
+              <span class="footer-comp-cta"><span>فتح الأداة</span><span data-icon="arrow-left" class="icon icon-sm"></span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-brand-bar">
+        <div class="footer-brand-top">
+          <a href="/" class="brand-logo">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>c9zwolf</span>
+            <span class="brand-tag" data-dev-trigger>IRAQ SEC LAB</span>
+          </a>
+          <div class="footer-ops-pill">
+            <span class="footer-ops-dot" aria-hidden="true"></span>
+            <span>CORE v3.0 // LIVE PRODUCTION</span>
+          </div>
+        </div>
+        <p class="footer-note">
+          جميع أجهزة وأدوات c9zwolf مخصصة لأغراض البحث الأكاديمي، الفحص الأمني المصرح به، واختبار الأنظمة الخاصة فقط. المستخدم يتحمل المسؤولية القانونية الكاملة عن الاستخدام.
+        </p>
+      </div>
+
+      <div class="footer-grid">
+        <div class="footer-nav-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">مكونات المتجر</h3>
+            <span class="footer-col-code">STORE // 05</span>
+          </div>
+          <ul class="footer-links-list">
+            <li><a href="/pages/shop.html?cat=all"><span data-icon="layers" class="icon icon-sm"></span><span class="footer-link-label">كافة الأجهزة والعتاد</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=wifi-ble"><span data-icon="wifi" class="icon icon-sm"></span><span class="footer-link-label">مختبرات Wi-Fi &amp; BLE</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=rf-subghz"><span data-icon="radio" class="icon icon-sm"></span><span class="footer-link-label">أجهزة Sub-GHz RF</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=nfc-rfid"><span data-icon="nfc" class="icon icon-sm"></span><span class="footer-link-label">أدوات NFC &amp; RFID</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html?cat=bundles"><span data-icon="package" class="icon icon-sm"></span><span class="footer-link-label">الحقائب الاحترافية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+          </ul>
+        </div>
+
+        <div class="footer-nav-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">المختبر والفيرموير</h3>
+            <span class="footer-col-code">LAB // 04</span>
+          </div>
+          <ul class="footer-links-list">
+            <li><a href="/pages/C9Z-Web-Flasher.html"><span data-icon="zap" class="icon icon-sm"></span><span class="footer-link-label">Web Flasher المباشر</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/firmware.html"><span data-icon="download" class="icon icon-sm"></span><span class="footer-link-label">مستودع الأنظمة الرسمية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/firmware.html#verify"><span data-icon="shield-check" class="icon icon-sm"></span><span class="footer-link-label">فحص بصمة SHA-256</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+            <li><a href="/pages/shop.html"><span data-icon="truck" class="icon icon-sm"></span><span class="footer-link-label">الشحن لـ 18 محافظة عراقية</span><span data-icon="chevron-left" class="icon icon-sm footer-link-arrow"></span></a></li>
+          </ul>
+        </div>
+
+        <div class="footer-social-panel">
+          <div class="footer-col-header">
+            <h3 class="footer-col-title">القنوات والمجتمع الرسمي</h3>
+            <span class="footer-col-code">NET // 05</span>
+          </div>
+          <div class="social-cards-list">
+            <a href="https://t.me/c9z_4" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="telegram">
+              <span class="social-card-icon"><span data-icon="telegram" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">قناة تيليجرام</span>
+                <span class="social-card-handle">@c9z_4</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://t.me/c9zwolfbot" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="bot">
+              <span class="social-card-icon"><span data-icon="bot" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">بوت الطلبات والدعم</span>
+                <span class="social-card-handle">@c9zwolfbot</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://www.instagram.com/c9z.4" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="instagram">
+              <span class="social-card-icon"><span data-icon="instagram" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">إنستغرام الرسمي</span>
+                <span class="social-card-handle">@c9z.4</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://www.youtube.com/@c9zwolf" target="_blank" rel="noopener noreferrer" class="social-card" data-platform="youtube">
+              <span class="social-card-icon"><span data-icon="youtube" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">شروحات يوتيوب</span>
+                <span class="social-card-handle">@c9zwolf</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+
+            <a href="https://github.com/c9zwolf" target="_blank" rel="noopener noreferrer" class="social-card social-card-wide" data-platform="github">
+              <span class="social-card-icon"><span data-icon="github" class="icon"></span></span>
+              <span class="social-card-meta">
+                <span class="social-card-title">مستودع المصادر المفتوحة</span>
+                <span class="social-card-handle">github.com/c9zwolf</span>
+              </span>
+              <span class="social-card-end">
+                <span class="social-card-badge">OPEN SOURCE</span>
+                <span class="social-card-arrow"><span data-icon="arrow-up-left" class="icon icon-sm"></span></span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 c9zwolf — جميع الحقوق محفوظة · العراق</span>
+        <div class="footer-pay-badges">
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>ZainCash</span></span>
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>AsiaHawala</span></span>
+          <span class="footer-pay-pill"><span data-icon="shield-check" class="icon icon-sm"></span><span>QiCard / Cards</span></span>
+          <span class="footer-pay-pill"><span data-icon="truck" class="icon icon-sm"></span><span>COD 18 محافظة</span></span>
+          <span class="footer-pay-pill"><span data-icon="lock" class="icon icon-sm"></span><span>SHA-256 Verified</span></span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/vendor/gsap/gsap.min.js"></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js"></script>
+  <script src="/vendor/gsap/Flip.min.js"></script>
+  <script src="/vendor/gsap/ScrambleTextPlugin.min.js"></script>
+  <script src="/assets/js/icons.js"></script>
+  <script src="/assets/js/motion.js"></script>
+  <script src="/assets/js/tactical-ui.js"></script>
+  <script src="/vendor/three/three.min.js"></script>
+  <script src="/assets/js/order-ceremony-3d.js"></script>
+  <script src="/assets/js/cart.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      let activeCategory = 'all';
+      let searchQuery = '';
+      let sortMode = 'default';
+
+      const menuBtn = document.getElementById('mobile-menu-toggle');
+      const navLinks = document.getElementById('shop-nav-links');
+      if (menuBtn && navLinks) {
+        menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+      }
+
+      function renderSpotlight() {
+        const container = document.getElementById('bestseller-spotlight');
+        if (!container) return;
+
+        const products = C9ZStore.getState().products || [];
+        const flagship = products.find((p) => p.id === 'c9z-3') || products.find((p) => p.is_bestseller) || products[0];
+        if (!flagship) return;
+
+        const specsEntries = Object.entries(flagship.specs || {}).slice(0, 4);
+
+        container.innerHTML = `
+          <div class="spotlight-card">
+            <div class="spotlight-media product-card-media">
+              ${C9ZStore.getProductVisual(flagship)}
+              <div class="tactical-hud-bar" aria-hidden="true">
+                <span class="tactical-hud-chip mono"><span class="hud-dot"></span> FLAGSHIP // ${C9ZStore.esc(flagship.id.toUpperCase())}</span>
+                <span class="tactical-hud-chip mono" data-hud-coords>TRK // X:000 Y:000</span>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2" style="margin-bottom:10px;flex-wrap:wrap">
+                <span class="badge badge-accent">${C9ZIcons.render('flame', 'icon icon-sm')} الجهاز الأكثر مبيعاً في المتجر</span>
+                <span class="badge badge-neutral mono">${C9ZStore.esc(flagship.id.toUpperCase())}</span>
+                <span class="badge badge-positive">متوفر للشحن الفوري</span>
+              </div>
+              <h2 style="margin:0 0 6px;font-size:1.5rem;font-weight:800">${C9ZStore.esc(flagship.name)}</h2>
+              <p style="margin:0 0 14px;color:var(--text-secondary);font-size:0.92rem;line-height:1.65">${C9ZStore.esc(flagship.description || flagship.short_desc)}</p>
+              <div class="product-card-specs" style="margin-bottom:18px">
+                ${specsEntries.map(([k, v]) => `<span class="spec-chip">${C9ZStore.esc(k)}: ${C9ZStore.esc(v)}</span>`).join('')}
+              </div>
+              <div class="flex items-center justify-between" style="flex-wrap:wrap;gap:16px;padding-top:14px;border-top:1px solid var(--line)">
+                <div>
+                  ${flagship.compare_at_iqd ? `<div class="price-compare">${C9ZStore.formatIQD(flagship.compare_at_iqd)}</div>` : ''}
+                  <div class="price-current" style="font-size:1.45rem">${C9ZStore.formatIQD(flagship.price_iqd)}</div>
+                </div>
+                <div class="spotlight-actions">
+                  <button type="button" class="btn btn-secondary" data-action="quick-view" data-id="${C9ZStore.esc(flagship.id)}">
+                    ${C9ZIcons.render('eye', 'icon')}
+                    <span>كامل المواصفات</span>
+                  </button>
+                  <button type="button" class="btn btn-primary" data-action="add-to-cart" data-id="${C9ZStore.esc(flagship.id)}">
+                    ${C9ZIcons.render('shopping-bag', 'icon')}
+                    <span>أضف إلى السلة</span>
+                  </button>
+                  <button type="button" class="btn btn-secondary" data-action="buy-now" data-id="${C9ZStore.esc(flagship.id)}">
+                    ${C9ZIcons.render('zap', 'icon')}
+                    <span>شراء فوري</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (window.C9ZMotion && typeof window.C9ZMotion.animateReveal === 'function') {
+          window.C9ZMotion.animateReveal(container);
+        }
+      }
+
+      function syncShopTabCounts(allProducts) {
+        const counts = {
+          all: allProducts.length,
+          bestsellers: allProducts.filter((p) => Boolean(p.is_bestseller || p.featured)).length,
+          'wifi-ble': allProducts.filter((p) => p.category_slug === 'wifi-ble').length,
+          'rf-subghz': allProducts.filter((p) => p.category_slug === 'rf-subghz').length,
+          'nfc-rfid': allProducts.filter((p) => p.category_slug === 'nfc-rfid').length,
+          bundles: allProducts.filter((p) => p.category_slug === 'bundles').length
+        };
+        document.querySelectorAll('[data-cat-count]').forEach((badge) => {
+          const k = badge.getAttribute('data-cat-count');
+          if (k && counts[k] !== undefined) {
+            badge.textContent = String(counts[k]);
+          }
+        });
+      }
+
+      function filterAndRenderProducts() {
+        const grid = document.getElementById('shop-products-grid');
+        const countEl = document.getElementById('shop-results-count');
+        const resetBtn = document.getElementById('shop-reset-filters');
+        if (!grid) return;
+
+        const all = (C9ZStore.getState().products || []).slice();
+        syncShopTabCounts(all);
+        let filtered = all;
+
+        if (activeCategory === 'bestsellers') {
+          filtered = filtered.filter((p) => Boolean(p.is_bestseller || p.featured));
+        } else if (activeCategory !== 'all') {
+          filtered = filtered.filter((p) => p.category_slug === activeCategory);
+        }
+
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.trim().toLowerCase();
+          filtered = filtered.filter((p) => {
+            const hay = `${p.id} ${p.name} ${p.subtitle} ${p.short_desc} ${p.description} ${p.badge_text || ''} ${JSON.stringify(p.specs || {})}`.toLowerCase();
+            return hay.includes(q);
+          });
+        }
+
+        if (sortMode === 'bestseller') {
+          filtered.sort((a, b) => (b.is_bestseller - a.is_bestseller) || (a.sort_order - b.sort_order));
+        } else if (sortMode === 'price-asc') {
+          filtered.sort((a, b) => a.price_iqd - b.price_iqd);
+        } else if (sortMode === 'price-desc') {
+          filtered.sort((a, b) => b.price_iqd - a.price_iqd);
+        }
+
+        if (countEl) {
+          countEl.textContent = `عرض ${filtered.length} من أصل ${all.length} منتج في المتجر`;
+        }
+        if (resetBtn) {
+          const isFiltered = activeCategory !== 'all' || searchQuery.trim() !== '' || sortMode !== 'default';
+          resetBtn.style.display = isFiltered ? 'inline-flex' : 'none';
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div class="cart-empty" style="grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)">
+              <p style="margin:0 0 8px;font-weight:700;color:var(--text)">لا توجد نتائج مطابقة لبحثك</p>
+              <p style="margin:0 0 14px;font-size:0.85rem">جرب البحث بكلمة أخرى أو استعرض جميع الفئات.</p>
+            </div>
+          `;
+          return;
+        }
+
+        const flipState =
+          window.C9ZMotion && typeof window.C9ZMotion.captureFlipState === 'function'
+            ? window.C9ZMotion.captureFlipState(grid)
+            : null;
+        grid.innerHTML = filtered.map((p) => C9ZStore.renderProductCard(p)).join('');
+        if (window.C9ZIcons && typeof window.C9ZIcons.hydrate === 'function') {
+          window.C9ZIcons.hydrate(grid);
+        }
+        if (window.C9ZMotion) {
+          window.C9ZMotion.animateProductSwap(grid, flipState);
+        }
+      }
+
+      function checkHashDeepLink() {
+        const params = new URLSearchParams(window.location.search);
+        const queryProd = (params.get('product') || '').trim();
+        const hash = queryProd || (window.location.hash || '').replace(/^#/, '').trim();
+        if (!hash) return;
+        const prod = C9ZStore.getProductById(hash);
+        if (prod) {
+          C9ZStore.openQuickView(prod.id);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        await C9ZStore.init();
+
+        const params = new URLSearchParams(window.location.search);
+        const queryCat = (params.get('cat') || '').trim();
+        const queryQ = (params.get('q') || '').trim();
+        const tabs = document.getElementById('shop-category-tabs');
+        const searchInput = document.getElementById('shop-search-input');
+        if (queryCat && tabs) {
+          const targetTab = tabs.querySelector(`[data-cat="${CSS.escape(queryCat)}"]`);
+          if (targetTab) {
+            activeCategory = queryCat;
+            tabs.querySelectorAll('.category-tab').forEach((b) => {
+              const isMatch = b === targetTab;
+              b.classList.toggle('active', isMatch);
+              b.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+            });
+          }
+        }
+        if (queryQ && searchInput) {
+          searchQuery = queryQ;
+          searchInput.value = queryQ;
+        }
+
+        renderSpotlight();
+        filterAndRenderProducts();
+        checkHashDeepLink();
+
+        window.addEventListener('hashchange', checkHashDeepLink);
+
+        if (tabs) {
+          tabs.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-cat]');
+            if (!btn) return;
+            tabs.querySelectorAll('.category-tab').forEach((b) => {
+              b.classList.remove('active');
+              b.setAttribute('aria-selected', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+            activeCategory = btn.getAttribute('data-cat');
+            filterAndRenderProducts();
+          });
+        }
+
+        if (searchInput) {
+          searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value;
+            filterAndRenderProducts();
+          });
+        }
+
+        const sortSelect = document.getElementById('shop-sort-select');
+        if (sortSelect) {
+          sortSelect.addEventListener('change', () => {
+            sortMode = sortSelect.value;
+            filterAndRenderProducts();
+          });
+        }
+
+        const resetBtn = document.getElementById('shop-reset-filters');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            activeCategory = 'all';
+            searchQuery = '';
+            sortMode = 'default';
+            if (searchInput) searchInput.value = '';
+            if (sortSelect) sortSelect.value = 'default';
+            if (tabs) {
+              tabs.querySelectorAll('.category-tab').forEach((b) => {
+                const isAll = b.getAttribute('data-cat') === 'all';
+                b.classList.toggle('active', isAll);
+                b.setAttribute('aria-selected', isAll ? 'true' : 'false');
+              });
+            }
+            filterAndRenderProducts();
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
